@@ -1,0 +1,1284 @@
+<!-- ACCOUNT.HTML -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - CreatorVault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #EC4899;
+            --secondary: #F9A8D4;
+            --accent: #BE185D;
+            --bg: #FFF8FC;
+            --card: #FFFFFF;
+            --text: #111827;
+            --text-light: #6B7280;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(236, 72, 153, 0.2);
+            --shadow: 0 8px 32px rgba(236, 72, 153, 0.15);
+            --success: #10B981;
+            --error: #EF4444;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-blob:nth-child(1) {
+            width: 600px;
+            height: 600px;
+            background: var(--secondary);
+            top: -200px;
+            right: -200px;
+        }
+
+        .bg-blob:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            bottom: -100px;
+            left: -100px;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -30px) scale(1.05); }
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow);
+            padding: 1rem 2rem;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-logout {
+            background: var(--error);
+            color: white;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu-btn span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: var(--text);
+            margin: 5px 0;
+            border-radius: 3px;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            padding: 2rem;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .mobile-menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mobile-menu-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.75rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-links a:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 8rem 2rem 4rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Tabs */
+        .tabs-nav {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-nav-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: var(--glass-bg);
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            color: var(--text);
+        }
+
+        .tab-nav-btn:hover {
+            background: var(--secondary);
+        }
+
+        .tab-nav-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            background: var(--bg);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+        }
+
+        /* Auth Tabs */
+        .auth-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .auth-tab-btn {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--glass-border);
+            background: transparent;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            color: var(--text);
+        }
+
+        .auth-tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        /* Membership Cards */
+        .membership-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .membership-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            border: 2px solid var(--glass-border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .membership-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .membership-card.popular {
+            border-color: var(--primary);
+        }
+
+        .membership-card.popular::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: 15px;
+            right: -30px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 0.25rem 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transform: rotate(45deg);
+        }
+
+        .plan-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-period {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .plan-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .plan-features li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+        }
+
+        .plan-features li svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--success);
+        }
+
+        /* Dashboard */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-stat {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .dashboard-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .dashboard-stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        .quick-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Payment Section */
+        .payment-info {
+            background: var(--glass-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin: 1rem auto;
+            display: block;
+        }
+
+        .payment-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .payment-detail {
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .payment-detail-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+
+        .payment-detail-value {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Messages */
+        .message {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid var(--error);
+        }
+
+        /* Recent Payments */
+        .payments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .payment-item {
+            background: var(--glass-bg);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .payment-item-info h4 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .payment-item-info p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .payment-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .payment-status.pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #D97706;
+        }
+
+        .payment-status.approved {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .payment-status.rejected {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--secondary);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .tabs-nav {
+                gap: 0.25rem;
+            }
+
+            .tab-nav-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .membership-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 7rem 1rem 3rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background -->
+    <div class="bg-pattern">
+        <div class="bg-blob"></div>
+        <div class="bg-blob"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Creator<span>Vault</span></a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="content.html">Content</a>
+                <button class="btn btn-logout" id="logoutBtn" style="display: none;">Logout</button>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <span class="logo">Creator<span>Vault</span></span>
+            <button class="mobile-menu-close" id="mobileMenuClose">&times;</button>
+        </div>
+        <div class="mobile-menu-links">
+            <a href="index.html">Home</a>
+            <a href="content.html">Content</a>
+            <a href="account.html">Account</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">My Account</h1>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tabs-nav">
+            <button class="tab-nav-btn active" data-tab="auth">Login / Register</button>
+            <button class="tab-nav-btn" data-tab="membership">Membership</button>
+            <button class="tab-nav-btn" data-tab="dashboard">Dashboard</button>
+            <button class="tab-nav-btn" data-tab="payment">Payment</button>
+        </div>
+
+        <!-- Auth Tab -->
+        <div class="tab-content active" id="auth-tab">
+            <div class="card">
+                <div class="auth-tabs">
+                    <button class="auth-tab-btn active" data-auth="login">Login</button>
+                    <button class="auth-tab-btn" data-auth="register">Register</button>
+                </div>
+
+                <div id="message-container"></div>
+
+                <!-- Login Form -->
+                <form class="auth-form active" id="login-form">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="login-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+                </form>
+
+                <!-- Register Form -->
+                <form class="auth-form" id="register-form">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" id="register-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="register-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="register-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" class="form-input" id="register-confirm" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Membership Tab -->
+        <div class="tab-content" id="membership-tab">
+            <div class="membership-grid">
+                <div class="membership-card">
+                    <h3 class="plan-name">Basic</h3>
+                    <div class="plan-price">$9</div>
+                    <div class="plan-period">per month</div>
+                    <ul class="plan-features">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Access to basic content
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Monthly updates
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Email support
+                        </li>
+                    </ul>
+                    <button class="btn btn-secondary" onclick="selectPlan('basic')" style="width: 100%;">Select Plan</button>
+                </div>
+
+                <div class="membership-card popular">
+                    <h3 class="plan-name">Premium</h3>
+                    <div class="plan-price">$19</div>
+                    <div class="plan-period">per month</div>
+                    <ul class="plan-features">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            All basic features
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Premium content access
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Priority support
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Early access
+                        </li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="selectPlan('premium')" style="width: 100%;">Select Plan</button>
+                </div>
+
+                <div class="membership-card">
+                    <h3 class="plan-name">VIP</h3>
+                    <div class="plan-price">$49</div>
+                    <div class="plan-period">per month</div>
+                    <ul class="plan-features">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            All premium features
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Exclusive VIP content
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Direct messaging
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Custom requests
+                        </li>
+                    </ul>
+                    <button class="btn btn-secondary" onclick="selectPlan('vip')" style="width: 100%;">Select Plan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div class="tab-content" id="dashboard-tab">
+            <div class="card">
+                <h3 class="card-title">Profile Information</h3>
+                <div class="dashboard-grid" id="profile-info">
+                    <div class="dashboard-stat">
+                        <div class="dashboard-stat-value" id="dash-name">-</div>
+                        <div class="dashboard-stat-label">Name</div>
+                    </div>
+                    <div class="dashboard-stat">
+                        <div class="dashboard-stat-value" id="dash-email">-</div>
+                        <div class="dashboard-stat-label">Email</div>
+                    </div>
+                    <div class="dashboard-stat">
+                        <div class="dashboard-stat-value" id="dash-membership">-</div>
+                        <div class="dashboard-stat-label">Membership</div>
+                    </div>
+                    <div class="dashboard-stat">
+                        <div class="dashboard-stat-value" id="dash-expiry">-</div>
+                        <div class="dashboard-stat-label">Expiry Date</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Quick Links</h3>
+                <div class="quick-links">
+                    <a href="content.html" class="btn btn-primary">Browse Content</a>
+                    <button class="btn btn-secondary" onclick="switchTab('membership')">Upgrade Membership</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Recent Payments</h3>
+                <div class="payments-list" id="recent-payments">
+                    <p style="color: var(--text-light);">No recent payments</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Tab -->
+        <div class="tab-content" id="payment-tab">
+            <div class="card">
+                <h3 class="card-title">Payment Information</h3>
+                
+                <div class="payment-info">
+                    <p style="font-weight: 600; margin-bottom: 0.5rem;">Scan QR Code to Pay</p>
+                    <img id="qr-image" src="" alt="QR Code" class="qr-code">
+                </div>
+
+                <div class="payment-details">
+                    <div class="payment-detail">
+                        <div class="payment-detail-label">UPI ID</div>
+                        <div class="payment-detail-value" id="upi-id">-</div>
+                    </div>
+                    <div class="payment-detail">
+                        <div class="payment-detail-label">Account Holder</div>
+                        <div class="payment-detail-value" id="account-holder">-</div>
+                    </div>
+                    <div class="payment-detail">
+                        <div class="payment-detail-label">Selected Plan</div>
+                        <div class="payment-detail-value" id="selected-plan-display">-</div>
+                    </div>
+                </div>
+
+                <div id="payment-message"></div>
+
+                <form id="payment-form">
+                    <div class="form-group">
+                        <label class="form-label">Transaction ID</label>
+                        <input type="text" class="form-input" id="transaction-id" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Screenshot URL (Optional)</label>
+                        <input type="url" class="form-input" id="screenshot-url">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Payment</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://your-project.supabase.co';
+        const SUPABASE_ANON_KEY = 'your-anon-key';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // State
+        let session = JSON.parse(localStorage.getItem('creatorvault_session') || 'null');
+        let selectedPlan = null;
+
+        // DOM Elements
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const mobileMenuClose = document.getElementById('mobileMenuClose');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const tabNavBtns = document.querySelectorAll('.tab-nav-btn');
+        const authTabBtns = document.querySelectorAll('.auth-tab-btn');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const paymentForm = document.getElementById('payment-form');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+            loadPaymentSettings();
+            if (session) {
+                loadRecentPayments();
+            }
+        });
+
+        // Mobile Menu
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+            mobileOverlay.classList.add('active');
+        });
+
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('active');
+            mobileOverlay.classList.remove('active');
+        }
+
+        mobileMenuClose.addEventListener('click', closeMobileMenu);
+        mobileOverlay.addEventListener('click', closeMobileMenu);
+
+        // Update UI based on session
+        function updateUI() {
+            if (session) {
+                logoutBtn.style.display = 'inline-flex';
+                document.getElementById('dash-name').textContent = session.user_name;
+                document.getElementById('dash-email').textContent = session.user_email;
+                document.getElementById('dash-membership').textContent = session.membership.charAt(0).toUpperCase() + session.membership.slice(1);
+                document.getElementById('dash-expiry').textContent = session.membership_expiry ? new Date(session.membership_expiry).toLocaleDateString() : 'N/A';
+                
+                // Hide auth tab, show dashboard
+                switchTab('dashboard');
+                document.querySelector('[data-tab="auth"]').style.display = 'none';
+            } else {
+                logoutBtn.style.display = 'none';
+                document.querySelector('[data-tab="auth"]').style.display = 'block';
+                switchTab('auth');
+            }
+        }
+
+        // Tab Navigation
+        tabNavBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                switchTab(tab);
+            });
+        });
+
+        function switchTab(tab) {
+            tabNavBtns.forEach(b => b.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(`${tab}-tab`).classList.add('active');
+        }
+
+        // Auth Tabs
+        authTabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                authTabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const auth = btn.dataset.auth;
+                document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+                document.getElementById(`${auth}-form`).classList.add('active');
+            });
+        });
+
+        // Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const messageContainer = document.getElementById('message-container');
+
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', email)
+                    .eq('password', password)
+                    .single();
+
+                if (error || !data) {
+                    messageContainer.innerHTML = '<div class="message error">Invalid email or password</div>';
+                    return;
+                }
+
+                // Save session
+                const sessionData = {
+                    user_id: data.id,
+                    user_name: data.full_name,
+                    user_email: data.email,
+                    membership: data.membership,
+                    role: data.role,
+                    membership_expiry: data.membership_expiry
+                };
+
+                localStorage.setItem('creatorvault_session', JSON.stringify(sessionData));
+                session = sessionData;
+
+                messageContainer.innerHTML = '<div class="message success">Login successful!</div>';
+                
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+
+            } catch (err) {
+                messageContainer.innerHTML = '<div class="message error">An error occurred</div>';
+            }
+        });
+
+        // Register
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirm = document.getElementById('register-confirm').value;
+            const messageContainer = document.getElementById('message-container');
+
+            if (password !== confirm) {
+                messageContainer.innerHTML = '<div class="message error">Passwords do not match</div>';
+                return;
+            }
+
+            try {
+                // Check if email exists
+                const { data: existing } = await supabase
+                    .from('users')
+                    .select('id')
+                    .eq('email', email)
+                    .single();
+
+                if (existing) {
+                    messageContainer.innerHTML = '<div class="message error">Email already registered</div>';
+                    return;
+                }
+
+                // Insert user
+                const { error } = await supabase
+                    .from('users')
+                    .insert({
+                        full_name: name,
+                        email: email,
+                        password: password,
+                        membership: 'free',
+                        role: 'user'
+                    });
+
+                if (error) {
+                    messageContainer.innerHTML = '<div class="message error">Registration failed</div>';
+                    return;
+                }
+
+                messageContainer.innerHTML = '<div class="message success">Registration successful! Please login.</div>';
+                
+                // Switch to login
+                document.querySelector('[data-auth="login"]').click();
+
+            } catch (err) {
+                messageContainer.innerHTML = '<div class="message error">An error occurred</div>';
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('creatorvault_session');
+            session = null;
+            window.location.href = 'index.html';
+        });
+
+        // Select Plan
+        function selectPlan(plan) {
+            if (!session) {
+                alert('Please login to subscribe');
+                switchTab('auth');
+                return;
+            }
+            
+            selectedPlan = plan;
+            document.getElementById('selected-plan-display').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+            switchTab('payment');
+        }
+
+        // Load Payment Settings
+        async function loadPaymentSettings() {
+            try {
+                const { data, error } = await supabase
+                    .from('payment_settings')
+                    .select('*')
+                    .eq('id', 1)
+                    .single();
+
+                if (data) {
+                    document.getElementById('qr-image').src = data.qr_image_url || '';
+                    document.getElementById('upi-id').textContent = data.upi_id || '-';
+                    document.getElementById('account-holder').textContent = data.account_holder || '-';
+                }
+            } catch (err) {
+                console.error('Error loading payment settings:', err);
+            }
+        }
+
+        // Load Recent Payments
+        async function loadRecentPayments() {
+            const container = document.getElementById('recent-payments');
+            
+            try {
+                const { data, error } = await supabase
+                    .from('payments')
+                    .select('*')
+                    .eq('user_id', session.user_id)
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+
+                if (error || !data || data.length === 0) {
+                    container.innerHTML = '<p style="color: var(--text-light);">No recent payments</p>';
+                    return;
+                }
+
+                container.innerHTML = data.map(p => `
+                    <div class="payment-item">
+                        <div class="payment-item-info">
+                            <h4>${p.plan.charAt(0).toUpperCase() + p.plan.slice(1)} Plan</h4>
+                            <p>${new Date(p.created_at).toLocaleDateString()}</p>
+                        </div>
+                        <span class="payment-status ${p.status}">${p.status.charAt(0).toUpperCase() + p.status.slice(1)}</span>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                container.innerHTML = '<p style="color: var(--text-light);">Error loading payments</p>';
+            }
+        }
+
+        // Submit Payment
+        paymentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!session) {
+                alert('Please login first');
+                return;
+            }
+
+            if (!selectedPlan) {
+                alert('Please select a plan first');
+                switchTab('membership');
+                return;
+            }
+
+            const transactionId = document.getElementById('transaction-id').value;
+            const screenshotUrl = document.getElementById('screenshot-url').value;
+            const messageContainer = document.getElementById('payment-message');
+
+            try {
+                const { error } = await supabase
+                    .from('payments')
+                    .insert({
+                        user_id: session.user_id,
+                        user_name: session.user_name,
+                        user_email: session.user_email,
+                        plan: selectedPlan,
+                        transaction_id: transactionId,
+                        screenshot_url: screenshotUrl,
+                        status: 'pending'
+                    });
+
+                if (error) {
+                    messageContainer.innerHTML = '<div class="message error">Failed to submit payment</div>';
+                    return;
+                }
+
+                messageContainer.innerHTML = '<div class="message success">Payment submitted successfully! Please wait for admin approval.</div>';
+                paymentForm.reset();
+                selectedPlan = null;
+                document.getElementById('selected-plan-display').textContent = '-';
+
+                loadRecentPayments();
+
+            } catch (err) {
+                messageContainer.innerHTML = '<div class="message error">An error occurred</div>';
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</body>
+</html>
