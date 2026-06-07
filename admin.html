@@ -1,0 +1,543 @@
+<!-- ADMIN.HTML -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - CreatorVault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #EC4899; --secondary: #F9A8D4; --accent: #BE185D;
+            --bg: #FFF8FC; --card: #FFFFFF; --text: #111827; --text-light: #6B7280;
+            --glass-bg: rgba(255, 255, 255, 0.7); --glass-border: rgba(236, 72, 153, 0.2);
+            --shadow: 0 8px 32px rgba(236, 72, 153, 0.15);
+            --success: #10B981; --error: #EF4444;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+        /* Background */
+        .bg-pattern { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; }
+        .bg-blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; animation: float 20s ease-in-out infinite; }
+        .bg-blob:nth-child(1) { width: 600px; height: 600px; background: var(--secondary); top: -200px; right: -200px; }
+        .bg-blob:nth-child(2) { width: 400px; height: 400px; background: var(--primary); bottom: -100px; left: -100px; animation-delay: -5s; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(30px, -30px) scale(1.05); } }
+
+        /* Navbar */
+        .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: var(--glass-bg); backdrop-filter: blur(20px); box-shadow: var(--shadow); padding: 1rem 2rem; }
+        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.75rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .logo span { color: var(--accent); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: all 0.3s ease; cursor: pointer; border: none; font-family: inherit; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--error); color: white; }
+        .btn-logout { background: var(--error); color: white; }
+
+        /* Main Content */
+        .main-content { padding: 8rem 2rem 4rem; max-width: 1400px; margin: 0 auto; }
+        .page-header { margin-bottom: 2rem; }
+        .page-title { font-size: 2rem; font-weight: 800; color: var(--text); }
+        .page-subtitle { color: var(--text-light); margin-top: 0.5rem; }
+
+        /* Login Screen */
+        .login-screen { max-width: 400px; margin: 100px auto; }
+        .login-card { background: var(--card); border-radius: 20px; padding: 2rem; box-shadow: var(--shadow); }
+        .login-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; text-align: center; }
+
+        /* Dashboard */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--card); border-radius: 16px; padding: 1.5rem; box-shadow: var(--shadow); }
+        .stat-value { font-size: 2rem; font-weight: 800; color: var(--primary); }
+        .stat-label { color: var(--text-light); font-size: 0.9rem; margin-top: 0.25rem; }
+
+        /* Tabs */
+        .tabs-nav { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; background: var(--card); padding: 1rem; border-radius: 16px; box-shadow: var(--shadow); }
+        .tab-btn { padding: 0.75rem 1.25rem; border: none; background: transparent; border-radius: 10px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; font-family: inherit; color: var(--text); font-size: 0.9rem; }
+        .tab-btn:hover { background: var(--secondary); }
+        .tab-btn.active { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; }
+
+        /* Tab Content */
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Cards */
+        .card { background: var(--card); border-radius: 20px; padding: 1.5rem; box-shadow: var(--shadow); margin-bottom: 1.5rem; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+        .card-title { font-size: 1.25rem; font-weight: 700; color: var(--text); }
+
+        /* Forms */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--text); font-size: 0.9rem; }
+        .form-input { width: 100%; padding: 0.75rem 1rem; border: 2px solid var(--glass-border); border-radius: 10px; font-size: 0.95rem; transition: all 0.3s ease; font-family: inherit; background: var(--bg); }
+        .form-input:focus { outline: none; border-color: var(--primary); }
+        .form-checkbox { display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; }
+        .form-checkbox input { width: 18px; height: 18px; accent-color: var(--primary); }
+
+        /* Toggle */
+        .toggle-group { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .toggle-btn { flex: 1; padding: 0.75rem; border: 2px solid var(--glass-border); background: transparent; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: inherit; color: var(--text); }
+        .toggle-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* Tables */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--glass-border); }
+        th { font-weight: 600; color: var(--text); background: var(--bg); }
+        td { color: var(--text-light); }
+        tr:hover { background: var(--bg); }
+        .status-badge { padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
+        .status-pending { background: rgba(245, 158, 11, 0.2); color: #D97706; }
+        .status-approved { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .status-rejected { background: rgba(239, 68, 68, 0.2); color: var(--error); }
+        .status-premium { background: rgba(236, 72, 153, 0.2); color: var(--primary); }
+        .status-free { background: rgba(107, 114, 128, 0.2); color: var(--text-light); }
+        .actions { display: flex; gap: 0.5rem; }
+        .btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; }
+
+        /* Messages */
+        .message { padding: 1rem; border-radius: 10px; margin-bottom: 1rem; font-weight: 500; }
+        .message.success { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid var(--success); }
+        .message.error { background: rgba(239, 68, 68, 0.1); color: var(--error); border: 1px solid var(--error); }
+
+        .loading { display: flex; align-items: center; justify-content: center; min-height: 200px; }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--secondary); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .main-content { padding: 7rem 1rem 3rem; }
+            .tabs-nav { padding: 0.75rem; }
+            .tab-btn { padding: 0.5rem 0.75rem; font-size: 0.8rem; }
+            .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+            th, td { padding: 0.75rem 0.5rem; font-size: 0.85rem; }
+            .actions { flex-direction: column; }
+        }
+        @media (max-width: 480px) { .dashboard-grid { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"><div class="bg-blob"></div><div class="bg-blob"></div></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Creator<span>Vault</span></a>
+            <button class="btn btn-logout" id="logoutBtn" style="display: none;">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <h2 class="login-title">Admin Login</h2>
+            <div id="login-message"></div>
+            <form id="admin-login-form">
+                <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="admin-email" required></div>
+                <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="admin-password" required></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="main-content" id="adminDashboard" style="display: none;">
+        <div class="page-header">
+            <h1 class="page-title">Admin Dashboard</h1>
+            <p class="page-subtitle">Manage your CreatorVault platform</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="dashboard-grid" id="stats-grid">
+            <div class="stat-card"><div class="stat-value" id="stat-photos">0</div><div class="stat-label">Total Photos</div></div>
+            <div class="stat-card"><div class="stat-value" id="stat-videos">0</div><div class="stat-label">Total Videos</div></div>
+            <div class="stat-card"><div class="stat-value" id="stat-premium">0</div><div class="stat-label">Premium Content</div></div>
+            <div class="stat-card"><div class="stat-value" id="stat-pending">0</div><div class="stat-label">Pending Payments</div></div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" data-tab="settings">Site Settings</button>
+            <button class="tab-btn" data-tab="add-content">Add Content</button>
+            <button class="tab-btn" data-tab="photos">Manage Photos</button>
+            <button class="tab-btn" data-tab="videos">Manage Videos</button>
+            <button class="tab-btn" data-tab="payments">Payments</button>
+            <button class="tab-btn" data-tab="users">Users</button>
+            <button class="tab-btn" data-tab="payment-settings">Payment Settings</button>
+        </div>
+
+        <!-- Site Settings Tab -->
+        <div class="tab-content active" id="settings-tab">
+            <div class="card">
+                <h3 class="card-title">Site Settings</h3>
+                <div id="settings-message"></div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Subscriber Count (Manual)</label>
+                        <input type="number" class="form-input" id="subscriber-count" placeholder="Enter subscriber count">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="saveSiteSettings()">Save Settings</button>
+            </div>
+        </div>
+
+        <!-- Add Content Tab -->
+        <div class="tab-content" id="add-content-tab">
+            <div class="card">
+                <div class="toggle-group">
+                    <button class="toggle-btn active" data-type="photo">Add Photo</button>
+                    <button class="toggle-btn" data-type="video">Add Video</button>
+                </div>
+                <div id="add-content-message"></div>
+
+                <!-- Photo Form -->
+                <form id="photo-form">
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Title</label><input type="text" class="form-input" id="photo-title" required></div>
+                        <div class="form-group"><label class="form-label">Category</label><input type="text" class="form-input" id="photo-category" placeholder="e.g., Portrait"></div>
+                    </div>
+                    <div class="form-group"><label class="form-label">Description</label><input type="text" class="form-input" id="photo-description"></div>
+                    <div class="form-group"><label class="form-label">Image URL</label><input type="url" class="form-input" id="photo-url" required></div>
+                    <div class="form-checkbox"><input type="checkbox" id="photo-premium"><label>Premium Content</label></div>
+                    <button type="submit" class="btn btn-primary">Add Photo</button>
+                </form>
+
+                <!-- Video Form -->
+                <form id="video-form" style="display: none;">
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Title</label><input type="text" class="form-input" id="video-title" required></div>
+                        <div class="form-group"><label class="form-label">Category</label><input type="text" class="form-input" id="video-category" placeholder="e.g., Vlog"></div>
+                    </div>
+                    <div class="form-group"><label class="form-label">Description</label><input type="text" class="form-input" id="video-description"></div>
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Video URL</label><input type="url" class="form-input" id="video-url" required></div>
+                        <div class="form-group"><label class="form-label">Thumbnail URL</label><input type="url" class="form-input" id="video-thumbnail" required></div>
+                    </div>
+                    <div class="form-group"><label class="form-label">Duration</label><input type="text" class="form-input" id="video-duration" placeholder="e.g., 5:30"></div>
+                    <div class="form-checkbox"><input type="checkbox" id="video-premium"><label>Premium Content</label></div>
+                    <button type="submit" class="btn btn-primary">Add Video</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Manage Photos Tab -->
+        <div class="tab-content" id="photos-tab">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">All Photos</h3></div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="photos-table"><tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Videos Tab -->
+        <div class="tab-content" id="videos-tab">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">All Videos</h3></div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Title</th><th>Category</th><th>Duration</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="videos-table"><tr><td colspan="5" class="loading"><div class="spinner"></div></td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payments Tab -->
+        <div class="tab-content" id="payments-tab">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Payment Requests</h3></div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>User</th><th>Plan</th><th>Transaction ID</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="payments-table"><tr><td colspan="5" class="loading"><div class="spinner"></div></td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div class="tab-content" id="users-tab">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">All Users</h3></div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Name</th><th>Email</th><th>Membership</th><th>Role</th></tr></thead>
+                        <tbody id="users-table"><tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Settings Tab -->
+        <div class="tab-content" id="payment-settings-tab">
+            <div class="card">
+                <h3 class="card-title">Payment Configuration</h3>
+                <div id="payment-settings-message"></div>
+                <div class="form-grid">
+                    <div class="form-group"><label class="form-label">UPI ID</label><input type="text" class="form-input" id="payment-upi" placeholder="e.g., name@upi"></div>
+                    <div class="form-group"><label class="form-label">Account Holder Name</label><input type="text" class="form-input" id="payment-holder" placeholder="Account holder name"></div>
+                </div>
+                <div class="form-group"><label class="form-label">QR Code Image URL</label><input type="url" class="form-input" id="payment-qr" placeholder="https://example.com/qr.png"></div>
+                <button class="btn btn-primary" onclick="savePaymentSettings()">Save Payment Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://your-project.supabase.co';
+        const SUPABASE_ANON_KEY = 'your-anon-key';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let adminSession = null;
+
+        // Tab Navigation
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(`${btn.dataset.tab}-tab`).classList.add('active');
+            });
+        });
+
+        // Toggle Content Type
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const type = btn.dataset.type;
+                document.getElementById('photo-form').style.display = type === 'photo' ? 'block' : 'none';
+                document.getElementById('video-form').style.display = type === 'video' ? 'block' : 'none';
+            });
+        });
+
+        // Check Session on Load
+        document.addEventListener('DOMContentLoaded', async () => {
+            const stored = localStorage.getItem('creatorvault_admin');
+            if (stored) {
+                adminSession = JSON.parse(stored);
+                await verifyAdmin();
+            }
+        });
+
+        // Verify Admin
+        async function verifyAdmin() {
+            try {
+                const { data } = await supabase.from('users').select('*').eq('id', adminSession.user_id).single();
+                if (data && data.role === 'admin') {
+                    showDashboard();
+                    loadAllData();
+                } else {
+                    localStorage.removeItem('creatorvault_admin');
+                    adminSession = null;
+                }
+            } catch (e) { localStorage.removeItem('creatorvault_admin'); }
+        }
+
+        // Login
+        document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('admin-email').value;
+            const pass = document.getElementById('admin-password').value;
+            const msg = document.getElementById('login-message');
+
+            try {
+                const { data, error } = await supabase.from('users').select('*').eq('email', email).eq('password', pass).single();
+                if (error || !data) { msg.innerHTML = '<div class="message error">Invalid credentials</div>'; return; }
+                if (data.role !== 'admin') { msg.innerHTML = '<div class="message error">Access Denied</div>'; return; }
+
+                adminSession = { user_id: data.id, user_name: data.full_name, user_email: data.email };
+                localStorage.setItem('creatorvault_admin', JSON.stringify(adminSession));
+                showDashboard();
+                loadAllData();
+            } catch (e) { msg.innerHTML = '<div class="message error">Error</div>'; }
+        });
+
+        function showDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'inline-flex';
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('creatorvault_admin');
+            location.reload();
+        });
+
+        // Load All Data
+        async function loadAllData() {
+            loadStats();
+            loadSiteSettings();
+            loadPhotos();
+            loadVideos();
+            loadPayments();
+            loadUsers();
+            loadPaymentSettings();
+        }
+
+        async function loadStats() {
+            const { count: pCount } = await supabase.from('photos').select('*', { count: 'exact', head: true });
+            const { count: vCount } = await supabase.from('videos').select('*', { count: 'exact', head: true });
+            const { count: premium } = await supabase.from('photos').select('*', { count: 'exact', head: true }).eq('premium', true);
+            const { count: pending } = await supabase.from('payments').select('*', { count: 'exact', head: true }).eq('status', 'pending');
+            document.getElementById('stat-photos').textContent = pCount || 0;
+            document.getElementById('stat-videos').textContent = vCount || 0;
+            document.getElementById('stat-premium').textContent = premium || 0;
+            document.getElementById('stat-pending').textContent = pending || 0;
+        }
+
+        // Site Settings
+        async function loadSiteSettings() {
+            const { data } = await supabase.from('site_settings').select('*').eq('id', 1).single();
+            if (data) document.getElementById('subscriber-count').value = data.subscriber_count || 0;
+        }
+        
+        window.saveSiteSettings = async function() {
+            const val = parseInt(document.getElementById('subscriber-count').value) || 0;
+            const msg = document.getElementById('settings-message');
+            const { error } = await supabase.from('site_settings').upsert({ id: 1, subscriber_count: val, updated_at: new Date().toISOString() });
+            msg.innerHTML = error ? '<div class="message error">Error</div>' : '<div class="message success">Saved!</div>';
+        };
+
+        // Add Photo
+        document.getElementById('photo-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById('add-content-message');
+            const { error } = await supabase.from('photos').insert({
+                title: document.getElementById('photo-title').value,
+                description: document.getElementById('photo-description').value,
+                url: document.getElementById('photo-url').value,
+                category: document.getElementById('photo-category').value,
+                premium: document.getElementById('photo-premium').checked
+            });
+            msg.innerHTML = error ? '<div class="message error">Failed to add photo</div>' : '<div class="message success">Photo Added!</div>';
+            if(!error) { e.target.reset(); loadPhotos(); loadStats(); }
+        });
+
+        // Add Video
+        document.getElementById('video-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById('add-content-message');
+            const { error } = await supabase.from('videos').insert({
+                title: document.getElementById('video-title').value,
+                description: document.getElementById('video-description').value,
+                video_url: document.getElementById('video-url').value,
+                thumbnail_url: document.getElementById('video-thumbnail').value,
+                duration: document.getElementById('video-duration').value,
+                category: document.getElementById('video-category').value,
+                premium: document.getElementById('video-premium').checked
+            });
+            msg.innerHTML = error ? '<div class="message error">Failed to add video</div>' : '<div class="message success">Video Added!</div>';
+            if(!error) { e.target.reset(); loadVideos(); loadStats(); }
+        });
+
+        // Manage Photos
+        async function loadPhotos() {
+            const tbody = document.getElementById('photos-table');
+            const { data } = await supabase.from('photos').select('*').order('created_at', { ascending: false });
+            tbody.innerHTML = (data || []).map(p => `
+                <tr><td>${p.title}</td><td>${p.category || '-'}</td><td><span class="status-badge ${p.premium ? 'status-premium' : 'status-free'}">${p.premium ? 'Premium' : 'Free'}</span></td>
+                <td><button class="btn btn-danger btn-sm" onclick="deletePhoto('${p.id}')">Delete</button></td></tr>
+            `).join('');
+        }
+        
+        window.deletePhoto = async function(id) {
+            if(confirm('Delete this photo?')) {
+                await supabase.from('photos').delete().eq('id', id);
+                loadPhotos(); loadStats();
+            }
+        };
+
+        // Manage Videos
+        async function loadVideos() {
+            const tbody = document.getElementById('videos-table');
+            const { data } = await supabase.from('videos').select('*').order('created_at', { ascending: false });
+            tbody.innerHTML = (data || []).map(v => `
+                <tr><td>${v.title}</td><td>${v.category || '-'}</td><td>${v.duration || '-'}</td><td><span class="status-badge ${v.premium ? 'status-premium' : 'status-free'}">${v.premium ? 'Premium' : 'Free'}</span></td>
+                <td><button class="btn btn-danger btn-sm" onclick="deleteVideo('${v.id}')">Delete</button></td></tr>
+            `).join('');
+        }
+        
+        window.deleteVideo = async function(id) {
+            if(confirm('Delete this video?')) {
+                await supabase.from('videos').delete().eq('id', id);
+                loadVideos(); loadStats();
+            }
+        };
+
+        // Manage Payments
+        async function loadPayments() {
+            const tbody = document.getElementById('payments-table');
+            const { data } = await supabase.from('payments').select('*').order('created_at', { ascending: false });
+            tbody.innerHTML = (data || []).map(p => `
+                <tr>
+                    <td>${p.user_name}<br><small>${p.user_email}</small></td>
+                    <td>${p.plan}</td><td>${p.transaction_id}</td>
+                    <td><span class="status-badge status-${p.status}">${p.status}</span></td>
+                    <td class="actions">
+                        ${p.status === 'pending' ? `
+                            <button class="btn btn-success btn-sm" onclick="approvePay('${p.id}','${p.user_id}','${p.plan}')">Approve</button>
+                            <button class="btn btn-danger btn-sm" onclick="rejectPay('${p.id}')">Reject</button>
+                        ` : '-'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.approvePay = async function(pid, uid, plan) {
+            const expDate = new Date();
+            expDate.setDate(expDate.getDate() + 30);
+            await supabase.from('users').update({ membership: plan, membership_expiry: expDate.toISOString() }).eq('id', uid);
+            await supabase.from('payments').update({ status: 'approved' }).eq('id', pid);
+            loadPayments(); loadStats();
+            alert('Approved!');
+        };
+
+        window.rejectPay = async function(pid) {
+            await supabase.from('payments').update({ status: 'rejected' }).eq('id', pid);
+            loadPayments(); loadStats();
+        };
+
+        // Manage Users
+        async function loadUsers() {
+            const tbody = document.getElementById('users-table');
+            const { data } = await supabase.from('users').select('*').order('created_at', { ascending: false });
+            tbody.innerHTML = (data || []).map(u => `
+                <tr><td>${u.full_name}</td><td>${u.email}</td>
+                <td><span class="status-badge ${u.membership !== 'free' ? 'status-premium' : 'status-free'}">${u.membership}</span></td>
+                <td>${u.role}</td></tr>
+            `).join('');
+        }
+
+        // Payment Config
+        async function loadPaymentSettings() {
+            const { data } = await supabase.from('payment_settings').select('*').eq('id', 1).single();
+            if (data) {
+                document.getElementById('payment-upi').value = data.upi_id || '';
+                document.getElementById('payment-holder').value = data.account_holder || '';
+                document.getElementById('payment-qr').value = data.qr_image_url || '';
+            }
+        }
+        
+        window.savePaymentSettings = async function() {
+            const msg = document.getElementById('payment-settings-message');
+            const { error } = await supabase.from('payment_settings').upsert({
+                id: 1,
+                upi_id: document.getElementById('payment-upi').value,
+                account_holder: document.getElementById('payment-holder').value,
+                qr_image_url: document.getElementById('payment-qr').value,
+                updated_at: new Date().toISOString()
+            });
+            msg.innerHTML = error ? '<div class="message error">Error</div>' : '<div class="message success">Saved!</div>';
+        };
+    </script>
+</body>
+</html>
